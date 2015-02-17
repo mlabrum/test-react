@@ -1,9 +1,7 @@
-'use strict';
-
-var debug = require('debug')('app');
 var webpack = require('webpack');
 var webpackDevServer = require('webpack-dev-server');
-var webpackConfig = require('./webpack.config.dev.js');
+var webpackConfig = require('./webpack.config.js');
+var debug = require('debug')('app');
 
 var webpackServer = new webpackDevServer(webpack(webpackConfig), {
 	publicPath: webpackConfig.output.publicPath,
@@ -14,9 +12,5 @@ var webpackServer = new webpackDevServer(webpack(webpackConfig), {
 		"Access-Control-Allow-Origin": "*"
 	}
 }).listen(3001, 'localhost', function(err, result){
-	if(err){
-		console.log(err);
-	} else{
-		debug("Webpack server listening on port 3001");
-	}
+		err ? console.log(err) : debug("Webpack server listening on port 3001");
 });

@@ -1,5 +1,7 @@
+process.env.NODE_ENV = 'production';
+
 module.exports = function(grunt) {
-	var webpackConfig = require('./src/webpack.config');
+	var webpackConfig = require('./webpack.config.js');
 	grunt.initConfig({
 		webpack: {
 			'dist': webpackConfig

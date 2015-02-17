@@ -10,6 +10,9 @@ module.exports = function(routes){
 			var markup = React.renderToString(<Handler/>);
 
 			var title = DocumentTitle.rewind();
+
+
+			// TODO inject stores data.
 			var html = React.renderToStaticMarkup(<Html title={title} markup={markup} />);
 
 			const isNotFound = _.find(state.routes, { 'name': 'not-found' });

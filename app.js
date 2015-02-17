@@ -6,18 +6,17 @@ var debug = require('debug')('app');
 var express = require('express');
 var bodyParser = require('body-parser');
 var compression = require('compression');
-//var serveStatic = require('serve-static');
-var routes = require('./src/routes.jsx');
-var router = require('./src/react-router-middleware.jsx')(routes);
 
-var app = express();
+var router = require('./src/react-router-middleware.jsx')(require('./src/react-routes.jsx'));
+
+var app = module.exports = express();
 app.set('port', process.env.port || 3000);
 
 app.use(compression());
 
 // Boot up webpack server
 if(app.get('env') == 'development'){
-	require('./src/dev-tools.js');
+	require('./webpack-dev-server.js');
 
 	app.use('/build', function(request, response){
 		response.redirect('http://localhost:3001/build' + request.path);
