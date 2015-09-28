@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+
+        <script src="public/bundles/budget.js"></script>
+
+        {{#production}}
+        <link rel="stylesheet" type="text/css" href="public/bundles/lib.css" media="all"/>
+        {{/production}}
+    </head>
+    <body>
+        <div id="react-body">{{{content}}}</div>
+    </body>
+</html>

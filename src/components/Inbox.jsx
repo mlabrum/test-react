@@ -1,18 +1,13 @@
-'use strict';
-var React = require('react');
-var DocumentTitle = require('react-document-title');
-var Jumbotron = require('./Jumbotron.jsx');
+import React from 'react'
+import Jumbotron from './Jumbotron.jsx'
 
-var Inbox = React.createClass({
-	render: function () {
+export default class Inbox extends React.Component{
+	render() {
 		return (
-			<DocumentTitle title='Inbox'>
-				<div>
-					<Jumbotron title='Welcome to the Inbox'/>
-					<div>Inbox Screen</div>
-				</div>
-			</DocumentTitle>
+			<div>
+				<Jumbotron title='Welcome to the Inbox'/>
+				<div>Inbox Screen</div>
+			</div>
 		);
 	}
-});
-module.exports = Inbox;
+}

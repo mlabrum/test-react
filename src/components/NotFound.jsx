@@ -1,14 +1,10 @@
-'use strict';
-var React = require('react');
-var DocumentTitle = require('react-document-title');
+import React from 'react';
+import {Link, IndexLink, RouteHandler} from 'react-router';
 
-var NotFound = React.createClass({
-	render: function () {
+export default class NotFound extends React.Component{
+	render() {
 		return (
-			<DocumentTitle title='Not Found'>
-				<div>Not Found</div>
-			</DocumentTitle>
+			<div>Not Found</div>
 		);
 	}
-});
-module.exports = NotFound;
+}

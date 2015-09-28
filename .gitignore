@@ -1,3 +1,4 @@
-public/build
+public/bundles
 node_modules/
 .idea/
+.env

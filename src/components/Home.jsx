@@ -1,18 +1,14 @@
 'use strict';
-var React = require('react');
-var DocumentTitle = require('react-document-title');
-var Jumbotron = require('./Jumbotron.jsx');
+import React from 'react';
+import Jumbotron from './Jumbotron.jsx';
 
-var Home = React.createClass({
-	render: function () {
+export default class Home extends React.Component{
+	render () {
 		return (
-			<DocumentTitle title='Home'>
-				<div>
-					<Jumbotron title='Welcome to the home page'/>
-					<div>Home Screen</div>
-				</div>
-			</DocumentTitle>
+			<div>
+				<Jumbotron title='Welcome to the home page'/>
+				<div>Home Screen</div>
+			</div>
 		);
 	}
-});
-module.exports = Home;
+}

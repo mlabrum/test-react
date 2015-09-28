@@ -1,84 +1,85 @@
-var webpack = require('webpack');
-var extractTextPlugin = require('extract-text-webpack-plugin');
-var _ = require('underscore');
+import path from 'path';
+import webpack from 'webpack';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import CommonsChunkPlugin from 'webpack/lib/optimize/CommonsChunkPlugin';
+import _ from 'lodash';
+
+var env = process.env.NODE_ENV;
 
 var exports = {
 	entry: {
+		main: ['./src/components/App.jsx'],
 		lib: [
-			'react',
-			'react-router',
-			'jquery',
-			'debug',
-			'react-document-title',
-			'bootstrap/dist/js/bootstrap.js'
-		],
-		main: ['./src/client.jsx']
+			'./src/BindReact.jsx',
+			"react",
+			"react-router",
+			"lodash",
+			"jquery",
+			"bootstrap/dist/js/bootstrap.js",
+			"./src/shared/css/global.less"
+		]
 	},
-
 	output: {
-		path: './public/build/',
-		publicPath: '/build/',
-		filename: 'main.js'
+		path: path.join(__dirname, 'public', 'bundles'),
+		filename: '[name].js',
+		publicPath: '/public/bundles/'
 	},
-
-	plugins: [
-		new webpack.optimize.CommonsChunkPlugin('lib', 'lib.js'),
-		new webpack.ProvidePlugin({
-			jQuery: "jquery",
-			$: "jquery"
-		})
-	],
-
 	module: {
 		loaders: [
-			{ test: /\.jsx$/, loaders: ['react-hot', 'jsx-loader'] },
-
-			{ test: /\.less$/, loader: process.env.NODE_ENV == 'production' ? extractTextPlugin.extract('style-loader', 'css-loader!less-loader') : "style-loader!css-loader!less-loader" },
-
-			// **IMPORTANT** This is needed so that each bootstrap js file required by
-			// bootstrap-webpack has access to the jQuery object
-			{ test: /bootstrap\/js\//, loader: 'imports?jQuery=jquery' },
-
-			// loads bootstrap's font files.
-			{ test: /\.woff$/,   loader: "url?limit=10000&minetype=application/font-woff" },
-			{ test: /\.woff2$/,   loader: "url?limit=10000&minetype=application/font-woff2" },
-			{ test: /\.ttf$/,    loader: "url?limit=10000&minetype=application/octet-stream" },
-			{ test: /\.eot$/,    loader: "file" },
-			{ test: /\.svg$/,    loader: "url?limit=10000&minetype=image/svg+xml" }
+			{ test: /\.less|\.css/, loader: env != 'development' ? ExtractTextPlugin.extract('style-loader', 'css-loader!less-loader') : "style-loader!css-loader!less-loader" },
+			{ test: /\.jsx?/, loaders: env != 'development' ? ['babel-loader?stage=1'] : ['react-hot-loader', 'babel-loader?stage=1'], exclude: /node_modules/ },
+			{ test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=10000&minetype=application/font-woff' },
+			{ test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader' }
 		]
-	}
+	},
+	plugins: [
+		new webpack.optimize.OccurenceOrderPlugin(),
+		new webpack.ProvidePlugin({
+			fetch: 'imports?this=>global!exports?global.fetch!whatwg-fetch',
+			$: "jquery",
+			jQuery: "jquery"
+		}),
+		new CommonsChunkPlugin({
+			name: "lib",
+			filename: "lib.js",
+			minChunks: 2
+		}),
+		new webpack.DefinePlugin({
+			"process.env": {
+				BROWSER: JSON.stringify(true)
+			}
+		})
+	]
 };
 
+console.log("Webpack in " + env + " mode");
 
-// Configure the file for either development or production webpack.
-if(process.env.NODE_ENV == 'production'){
+if (env != 'development') {
 	exports.plugins = exports.plugins.concat([
 		new webpack.DefinePlugin({
 			"process.env": {
 				"NODE_ENV": JSON.stringify('production')
 			}
 		}),
-		new webpack.optimize.DedupePlugin(),
-		new extractTextPlugin("main.css", {
+		new ExtractTextPlugin("[name].css", {
 			allChunks: true
 		}),
 		new webpack.optimize.UglifyJsPlugin({
-			compress: {warnings: false}
+			compress: { warnings: false }
 		})
 	]);
 
-}else{
+} else {
+	exports.devtool = "source-map";
 
-	exports.devtool = "#inline-source-map";
-	exports.entry = [
-		'webpack-dev-server/client?http://localhost:3001',
-		'webpack/hot/dev-server'
-	].concat(_.chain(exports.entry).map(_.values).flatten().value());
+	for (let name in exports.entry) {
+		if (name != 'lib') {
+			exports.entry[name].push('webpack-hot-middleware/client');
+			exports.entry[name].push('webpack/hot/dev-server');
+		}
+	}
 
 	exports.plugins = [new webpack.HotModuleReplacementPlugin()].concat(exports.plugins);
-
-	exports.output.path = __dirname;
-	exports.output.publicPath = 'http://localhost:3001/build/';
 }
 
 module.exports = exports;

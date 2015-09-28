@@ -1,8 +1,7 @@
-'use strict';
-var React = require('react');
+import React from 'react'
 
-var Jumbotron = React.createClass({
-	render: function () {
+export default class Jumbotron extends React.Component{
+	render(){
 		return (
 			<div className="container">
 				<div className="jumbotron">
@@ -12,5 +11,4 @@ var Jumbotron = React.createClass({
 			</div>
 		);
 	}
-});
-module.exports = Jumbotron;
+}
